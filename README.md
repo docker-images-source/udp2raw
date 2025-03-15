@@ -115,6 +115,7 @@ client options:
 other options:
     --conf-file           <string>        read options from a configuration file instead of command line.
                                           check example.conf in repo for format
+    --fake-http           <string>        enable http obfuscation and use given string as hostname.
     --fifo                <string>        use a fifo(named pipe) for sending commands to the running program,
                                           check readme.md in repository for supported commands.
     --log-level           <number>        0:never    1:fatal   2:error   3:warn
@@ -197,6 +198,10 @@ Then start the server with
 Use a fifo(named pipe) for sending commands to the running program. For example `--fifo fifo.file`.
 
 At client side,you can use `echo reconnect >fifo.file` to force client to reconnect.Currently no command has been implemented for server.
+
+### `--fake-http`
+
+During the handshake, the HTTP request header is sent first for obfuscation, with specified string as the hostname of the target.
 
 # Peformance Test
 #### Test method:

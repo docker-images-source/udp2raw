@@ -15,6 +15,8 @@ const int disable_conn_clear = 0;  // a raw connection is called conn.
 
 conn_manager_t conn_manager;
 
+extern char fake_http_hostname[256];
+
 anti_replay_seq_t anti_replay_t::get_new_seq_for_send() {
     return anti_replay_seq++;
 }
@@ -364,8 +366,40 @@ int recv_bare(raw_info_t &raw_info, char *&data, int &len)  // recv function wit
     return reserved_parse_bare(data, len, data, len);
 }
 
+static int send_fake_http(raw_info_t &raw_info)
+{
+    static const char *user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                                    "Chrome/120.0.0.0 Safari/537.36";
+    char data[1500];
+    bool psh_old = raw_info.send_info.psh;
+
+    snprintf(data, sizeof(data), 
+        "GET / HTTP/1.1\r\n"
+        "Host: %s\r\n"
+        "User-Agent: %s\r\n"
+        "Accept: */*\r\n"
+        "\r\n",
+        fake_http_hostname, user_agent
+    );
+
+    raw_info.send_info.psh = 1;
+    if (send_raw0(raw_info, data, strlen(data)) != 0) {
+        mylog(log_warn, "send fake http failed\n");
+        return -1;
+    }
+
+    usleep(32000);
+    raw_info.send_info.psh = psh_old;
+
+    return 0;
+}
+
 int send_handshake(raw_info_t &raw_info, my_id_t id1, my_id_t id2, my_id_t id3)  // a warp for send_bare for sending handshake(this is not tcp handshake) easily
 {
+    if (fake_http_hostname[0] && send_fake_http(raw_info) != 0)
+        return -1;
+
     packet_info_t &send_info = raw_info.send_info;
     packet_info_t &recv_info = raw_info.recv_info;
 

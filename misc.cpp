@@ -90,6 +90,9 @@ int socket_buf_size = 1024 * 1024;
 // int force_socket_buf=0;
 
 // char lower_level_arg[1000];
+
+char fake_http_hostname[256] = "";
+
 #ifdef UDP2RAW_LINUX
 int process_lower_level_arg()  // handle --lower-level option
 {
@@ -158,6 +161,7 @@ void print_help() {
     printf("other options:\n");
     printf("    --conf-file           <string>        read options from a configuration file instead of command line.\n");
     printf("                                          check example.conf in repo for format\n");
+    printf("    --fake-http           <string>        enable http obfuscation and use given string as hostname.\n");
     printf("    --fifo                <string>        use a fifo(named pipe) for sending commands to the running program,\n");
     printf("                                          check readme.md in repository for supported commands.\n");
     printf("    --log-level           <number>        0:never    1:fatal   2:error   3:warn \n");
@@ -296,6 +300,7 @@ void process_arg(int argc, char *argv[])  // process all options
             {"no-pcap-mutex", no_argument, 0, 1},
 #endif
             {"fix-gro", no_argument, 0, 1},
+            {"fake-http", required_argument, 0, 1},
             {NULL, 0, 0, 0}};
 
     process_log_level(argc, argv);
@@ -675,6 +680,11 @@ void process_arg(int argc, char *argv[])  // process all options
                     use_tcp_dummy_socket = 1;
                     mylog(log_info, "--easy-tcp enabled, now a dummy tcp socket will be created for handshake and block rst\n");
                 } else if (strcmp(long_options[option_index].name, "fix-gro") == 0) {
+                    mylog(log_info, "--fix-gro enabled\n");
+                    g_fix_gro = 1;
+                } else if (strcmp(long_options[option_index].name, "fake-http") == 0) {
+                    sscanf(optarg, "%255s", fake_http_hostname);
+
                     mylog(log_info, "--fix-gro enabled\n");
                     g_fix_gro = 1;
                 } else {

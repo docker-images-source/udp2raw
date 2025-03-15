@@ -128,6 +128,7 @@ client options:
 other options:
     --conf-file           <string>        read options from a configuration file instead of command line.
                                           check example.conf in repo for format
+    --fake-http           <string>        enable http obfuscation and use given string as hostname.
     --fifo                <string>        use a fifo(named pipe) for sending commands to the running program,
                                           check readme.md in repository for supported commands.
     --log-level           <number>        0:never    1:fatal   2:error   3:warn
@@ -232,6 +233,10 @@ server端也可以用`--lower-level auto` 来尝试自动获得参数，如果�
 ```bash
 ./udp2raw_amd64 --conf-file server.conf
 ```
+
+### `--fake-http`
+
+握手时，首先发送 HTTP 请求头作为混淆，并使用指定字符串作为目标主机名。
 
 # 性能测试
 iperf3 的UDP模式有BUG，所以，这里用iperf3的tcp模式，配合Openvpn，测试udp2raw的性能。（iperf3 udp issue ,https://github.com/esnet/iperf/issues/296 ）
