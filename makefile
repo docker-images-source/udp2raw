@@ -73,9 +73,9 @@ mips24kc_le: git_version
 mips24kc_le_asm_aes: git_version
 	${cc_mips24kc_le}  -o ${NAME}_$@   -I. ${SOURCES_AES_ACC} ${FLAGS} -lrt -lgcc_eh -static -O2 lib/aes_acc/asm/mips.S
 amd64:git_version
-	${cc_amd64}   -o ${NAME}_$@    -I. ${SOURCES} ${FLAGS} -lrt -static -O2 -lgcc_eh -ggdb
+	${cc_local}   -o ${NAME}_$@    -I. ${SOURCES} ${FLAGS} -lrt -static -O3 -lgcc_eh
 amd64_hw_aes:git_version
-	${cc_amd64}   -o ${NAME}_$@   -I. ${SOURCES_AES_ACC} ${FLAGS} -lrt -static -O2 lib/aes_acc/asm/x64.S -lgcc_eh -ggdb
+	${cc_local}   -o ${NAME}_$@   -I. ${SOURCES_AES_ACC} ${FLAGS} -lrt -static -O3 lib/aes_acc/asm/x64.S -lgcc_eh
 x86:git_version
 	${cc_x86}   -o ${NAME}_$@      -I. ${SOURCES} ${FLAGS} -lrt -static -O2 -lgcc_eh -ggdb
 x86_asm_aes:git_version
@@ -84,6 +84,10 @@ arm:git_version
 	${cc_arm}   -o ${NAME}_$@      -I. ${SOURCES} ${FLAGS} -lrt -static -O2 -lgcc_eh
 arm_asm_aes:git_version
 	${cc_arm}   -o ${NAME}_$@    -I. ${SOURCES_AES_ACC} ${FLAGS} -lrt -static -O2 lib/aes_acc/asm/arm.S -lgcc_eh
+arm64:git_version
+	${cc_local}   -o ${NAME}_$@      -I. ${SOURCES} ${FLAGS} -lrt -static -O3 -lgcc_eh
+arm64_hw_aes:git_version
+	${cc_local}   -o ${NAME}_$@    -I. ${SOURCES_AES_ACC} ${FLAGS} -lrt -static -O3 lib/aes_acc/asm/arm64.S -lgcc_eh
 
 release: ${TARGETS}
 	cp git_version.h version.txt
